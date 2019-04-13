@@ -49,6 +49,11 @@ public class WxPayConfig {
    * 商户密钥.
    */
   private String mchKey;
+
+  /**
+   * APIv3密钥
+   */
+  private String apiV3Key;
   /**
    * 服务商模式下的子商户号.
    */

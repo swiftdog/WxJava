@@ -1,5 +1,8 @@
 package com.github.binarywang.wxpay.config;
 
+import com.github.binarywang.wxpay.bean.result.ApiCertificateInfoBo;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -24,6 +27,17 @@ public class WxPayConfigTest {
     payConfig.setMchId("123");
     payConfig.setKeyPath("classpath:/abc.p12");
     payConfig.initSSLContext();
+  }
+
+  @Test
+  public void testDownloadApiCertificate() throws Exception{
+    payConfig.setMchId("");
+    payConfig.setMchKey("");
+    payConfig.setApiV3Key("");
+    WxPayService wxPayService = new WxPayServiceImpl();
+    wxPayService.setConfig(payConfig);
+    ApiCertificateInfoBo result = wxPayService.downloadApiCertificates();
+    System.out.println(result);
   }
 
 }

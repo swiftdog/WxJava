@@ -5,13 +5,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.util.*;
 import java.util.zip.ZipException;
 
+import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
+import com.github.binarywang.wxpay.bean.request.*;
+import com.github.binarywang.wxpay.bean.result.*;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import me.chanjar.weixin.common.util.json.GsonHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,39 +38,6 @@ import com.github.binarywang.wxpay.bean.order.WxPayAppOrderResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMwebOrderResult;
 import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult;
-import com.github.binarywang.wxpay.bean.request.WxPayAuthcode2OpenidRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayDefaultRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayDownloadBillRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayDownloadFundFlowRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayMicropayRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayOrderCloseRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayOrderQueryRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayOrderReverseRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayQueryCommentRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayRedpackQueryRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayRefundQueryRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
-import com.github.binarywang.wxpay.bean.request.WxPaySendRedpackRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayShorturlRequest;
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
-import com.github.binarywang.wxpay.bean.result.WxPayAuthcode2OpenidResult;
-import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
-import com.github.binarywang.wxpay.bean.result.WxPayCommonResult;
-import com.github.binarywang.wxpay.bean.result.WxPayFundFlowBaseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayFundFlowResult;
-import com.github.binarywang.wxpay.bean.result.WxPayMicropayResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderReverseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRedpackQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
-import com.github.binarywang.wxpay.bean.result.WxPaySandboxSignKeyResult;
-import com.github.binarywang.wxpay.bean.result.WxPaySendRedpackResult;
-import com.github.binarywang.wxpay.bean.result.WxPayShorturlResult;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.constant.WxPayConstants.BillType;
 import com.github.binarywang.wxpay.constant.WxPayConstants.SignType;
@@ -75,6 +49,11 @@ import com.github.binarywang.wxpay.util.SignUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import jodd.io.ZipUtil;
+
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import static com.github.binarywang.wxpay.constant.WxPayConstants.QUERY_COMMENT_DATE_FORMAT;
 import static com.github.binarywang.wxpay.constant.WxPayConstants.TarType;
@@ -820,4 +799,51 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
 
     return responseContent;
   }
+
+  @Override
+  public ApiCertificateInfoBo downloadApiCertificates() throws WxPayException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
+    GetApiCertificatesRequest request = new GetApiCertificatesRequest();
+    request.setSignType(SignType.HMAC_SHA256);
+    request.checkAndSign(this.getConfig());
+    String url = this.getPayBaseUrl() + "/risk/getcertficates";
+    String responseContent = this.post(url, request.toXML(), false);
+    WxPayApiCertificateResult apiCertificateResult = BaseWxPayResult.fromXML(responseContent, WxPayApiCertificateResult.class);
+    if(apiCertificateResult != null && WxPayConstants.ResultCode.SUCCESS.equals(apiCertificateResult.getReturnCode())
+        && WxPayConstants.ResultCode.SUCCESS.equals(apiCertificateResult.getResultCode())){
+      String certificateStr = apiCertificateResult.getCertificates();
+      JsonElement je = new JsonParser().parse(certificateStr);
+      JsonObject jo = je.getAsJsonObject();
+      JsonArray data = jo.get("data").getAsJsonArray();
+      JsonObject certificateJo = data.get(0).getAsJsonObject();
+      String serialNo = GsonHelper.getString(certificateJo, "serial_no");
+      String effectiveTime = GsonHelper.getString(certificateJo, "effective_time");
+      String expireTime = GsonHelper.getString(certificateJo, "expire_time");
+      JsonObject encryptCertificateJo = certificateJo.get("encrypt_certificate").getAsJsonObject();
+      String algorithm = GsonHelper.getString(encryptCertificateJo, "algorithm");
+      String nonce = GsonHelper.getString(encryptCertificateJo, "nonce");
+      String associatedData = GsonHelper.getString(encryptCertificateJo, "associated_data");
+      String cipherText = GsonHelper.getString(encryptCertificateJo, "ciphertext");
+      String apiCertificatePlainText = null;
+
+      try{
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "SunJCE");
+        SecretKeySpec key = new SecretKeySpec(this.getConfig().getApiV3Key().getBytes(), "AES");
+        GCMParameterSpec spec = new GCMParameterSpec(128, nonce.getBytes());
+        cipher.init(Cipher.DECRYPT_MODE, key, spec);
+        cipher.updateAAD(associatedData.getBytes());
+        apiCertificatePlainText = new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+      }catch (Exception e){
+        log.error("解密api证书失败", e);
+      }
+
+      ApiCertificateInfoBo apiCertificateInfoBo = new ApiCertificateInfoBo();
+      apiCertificateInfoBo.setSerialNo(serialNo);
+      apiCertificateInfoBo.setEffectiveTime(effectiveTime);
+      apiCertificateInfoBo.setExpireTime(expireTime);
+      apiCertificateInfoBo.setCertificateContent(apiCertificatePlainText);
+      return apiCertificateInfoBo;
+    }
+    return null;
+  }
+
 }

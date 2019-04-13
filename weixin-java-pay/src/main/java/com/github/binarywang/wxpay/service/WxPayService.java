@@ -1,6 +1,8 @@
 package com.github.binarywang.wxpay.service;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Date;
 import java.util.Map;
 
@@ -27,19 +29,11 @@ import com.github.binarywang.wxpay.bean.request.WxPayReportRequest;
 import com.github.binarywang.wxpay.bean.request.WxPaySendRedpackRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayShorturlRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayBillResult;
-import com.github.binarywang.wxpay.bean.result.WxPayFundFlowResult;
-import com.github.binarywang.wxpay.bean.result.WxPayMicropayResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderCloseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayOrderReverseResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRedpackQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundQueryResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
-import com.github.binarywang.wxpay.bean.result.WxPaySendRedpackResult;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
+
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * <pre>
@@ -685,4 +679,10 @@ public interface WxPayService {
    * @throws WxPayException the wx pay exception
    */
   String queryComment(Date beginDate, Date endDate, Integer offset, Integer limit) throws WxPayException;
+
+  /**
+   * 下载平台证书
+   * @return
+   */
+  ApiCertificateInfoBo downloadApiCertificates() throws WxPayException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException;
 }
