@@ -1,6 +1,7 @@
 package com.github.binarywang.wxpay.service.impl;
 
-import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
+import com.github.binarywang.wxpay.bean.result.MicroStoreApplySettleInResult;
 import com.github.binarywang.wxpay.service.MicroStoreService;
 
 
@@ -12,14 +13,8 @@ public class MicroStoreServiceImpl implements MicroStoreService {
 
 
   @Override
-  public String getApiCertificates(String mchId) {
-    /*GetApiCertificatesRequest getApiCertificatesRequest = new GetApiCertificatesRequest();
-    getApiCertificatesRequest.checkAndSign();
-
-    WxPayServiceJoddHttpImpl wxPayServiceJoddHttp = new WxPayServiceJoddHttpImpl();
-    wxPayServiceJoddHttp*/
+  public MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request) {
     return null;
   }
-
 
 }

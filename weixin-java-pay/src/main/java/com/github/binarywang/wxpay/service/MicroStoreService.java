@@ -1,5 +1,8 @@
 package com.github.binarywang.wxpay.service;
 
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
+import com.github.binarywang.wxpay.bean.result.MicroStoreApplySettleInResult;
+
 /**
  * 微信支付服务商相关接口
  * Created by : yanfei
@@ -7,6 +10,6 @@ package com.github.binarywang.wxpay.service;
  */
 public interface MicroStoreService {
 
-  String getApiCertificates(String mchId);
+  MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request);
 
 }
