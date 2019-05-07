@@ -1,5 +1,7 @@
 package com.github.binarywang.wxpay.bean.microStore;
 
+import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.*;
 
@@ -15,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @XStreamAlias("xml")
-public class MicroStoreApplySettleInRequest {
+public class MicroStoreApplySettleInRequest extends BaseWxPayRequest {
 
   /**
    * 必填，接口版本号，固定版本号为3.0
@@ -234,4 +236,8 @@ public class MicroStoreApplySettleInRequest {
   @XStreamAlias("contact_email")
   private String contactEmail;
 
+  @Override
+  protected void checkConstraints() throws WxPayException {
+
+  }
 }

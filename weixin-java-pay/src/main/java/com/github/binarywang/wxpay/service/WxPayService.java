@@ -13,6 +13,7 @@ import com.github.binarywang.wxpay.bean.coupon.WxPayCouponSendRequest;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponSendResult;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryRequest;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryResult;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxScanPayNotifyResult;
@@ -685,4 +686,6 @@ public interface WxPayService {
    * @return
    */
   ApiCertificateInfoBo downloadApiCertificates() throws WxPayException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException;
+
+  MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request) throws Exception;
 }

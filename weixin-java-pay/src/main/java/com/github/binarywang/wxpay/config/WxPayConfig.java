@@ -95,6 +95,16 @@ public class WxPayConfig {
   private boolean useSandboxEnv = false;
 
   /**
+   * 平台证书SN序列号
+   */
+  private String platformCertSn;
+
+  /**
+   * 平台证书内容的字节数组
+   */
+  private byte[] platformCertContent;
+
+  /**
    * 是否将接口请求日志信息保存到threadLocal中.
    * 默认不保存
    */

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.zip.ZipException;
 
 import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
 import com.github.binarywang.wxpay.bean.request.*;
 import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
@@ -18,6 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.chanjar.weixin.common.util.crypto.WxCryptUtil;
 import me.chanjar.weixin.common.util.json.GsonHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -846,4 +848,27 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
     return null;
   }
 
+  @Override
+  public MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request) throws Exception {
+    request.setSignType(SignType.HMAC_SHA256);
+
+    WxPayConfig wxPayConfig = this.getConfig();
+    byte[] platformCertSn = wxPayConfig.getPlatformCertContent();
+    request.setVersion("3.0");
+    request.setCertSn(wxPayConfig.getPlatformCertSn());
+    request.setCertSn(WxCryptUtil.rsaEncrypt(request.getCertSn(), platformCertSn));
+    request.setIdCardName(WxCryptUtil.rsaEncrypt(request.getIdCardName(), platformCertSn));
+    request.setIdCardNumber(WxCryptUtil.rsaEncrypt(request.getIdCardNumber(), platformCertSn));
+    request.setAccountName(WxCryptUtil.rsaEncrypt(request.getAccountName(), platformCertSn));
+    request.setAccountNumber(WxCryptUtil.rsaEncrypt(request.getAccountNumber(), platformCertSn));
+    request.setContact(WxCryptUtil.rsaEncrypt(request.getContact(), platformCertSn));
+    request.setContactPhone(WxCryptUtil.rsaEncrypt(request.getContactPhone(), platformCertSn));
+    request.setContactEmail(WxCryptUtil.rsaEncrypt(request.getContactEmail(), platformCertSn));
+
+    request.checkAndSign(this.getConfig());
+    String url = this.getPayBaseUrl() + "/applyment/micro/submit";
+    String responseContent = this.post(url, request.toXML(), false);
+    MicroStoreApplySettleInResult apiCertificateResult = BaseWxPayResult.fromXML(responseContent, MicroStoreApplySettleInResult.class);
+    return apiCertificateResult;
+  }
 }

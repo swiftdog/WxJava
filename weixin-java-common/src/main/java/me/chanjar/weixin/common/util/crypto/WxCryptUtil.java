@@ -3,11 +3,15 @@ package me.chanjar.weixin.common.util.crypto;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.security.cert.X509Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -281,5 +285,31 @@ public class WxCryptUtil {
     return xmlContent;
 
   }
+
+
+  //敏感字段数据加密方法
+  private static byte[] encryptPkcs1padding(PublicKey publicKey, byte[] data) throws Exception {
+    String CIPHER_PROVIDER = "SunJCE";
+    String TRANSFORMATION_PKCS1Paddiing = "RSA/ECB/PKCS1Padding";
+    Cipher ci = Cipher.getInstance(TRANSFORMATION_PKCS1Paddiing, CIPHER_PROVIDER);
+    ci.init(Cipher.ENCRYPT_MODE, publicKey);
+    return ci.doFinal(data);
+  }
+
+  //敏感字段加密后的秘文，使用base64编码方法
+  private static String encodeBase64(byte[] bytes) throws Exception {
+    return Base64.encodeBase64String(bytes);
+  }
+
+  //对敏感内容（入参Content）加密，其中PUBLIC_KEY_FILENAME为存放平台证书的路径，平台证书文件存放明文平台证书内容，且为pem格式的平台证书（平台证书的获取方式参照平台证书及序列号获取接口，通过此接口得到的参数certificates包含了加密的平台证书内容ciphertext，然后根据接口文档中平台证书解密指引，最终得到明文平台证书内容）
+  public static String rsaEncrypt(String Content, byte[] publicKeyBytes) throws Exception {
+    String CHAR_ENCODING = "UTF-8";
+    /*String PUBLIC_KEY_FILENAME = "/path/certificate";
+    final byte[] PublicKeyBytes = Files.readAllBytes(Paths.get(PUBLIC_KEY_FILENAME));*/
+    X509Certificate certificate = X509Certificate.getInstance(publicKeyBytes);
+    PublicKey publicKey = certificate.getPublicKey();
+    return encodeBase64(encryptPkcs1padding(publicKey, Content.getBytes(CHAR_ENCODING)));
+  }
+
 
 }
