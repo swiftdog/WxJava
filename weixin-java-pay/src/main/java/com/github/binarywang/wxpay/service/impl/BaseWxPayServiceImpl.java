@@ -12,6 +12,7 @@ import java.util.zip.ZipException;
 
 import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.request.*;
 import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
@@ -849,7 +850,12 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
   }
 
   @Override
-  public MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request) throws Exception {
+  public MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request) {
+    return null;
+  }
+
+  @Override
+  public MicroStoreApplySettleInResult microStoreApplySettleIn(MicroStoreApplySettleInRequest request) throws Exception {
     request.setSignType(SignType.HMAC_SHA256);
 
     WxPayConfig wxPayConfig = this.getConfig();

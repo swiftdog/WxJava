@@ -14,6 +14,7 @@ import com.github.binarywang.wxpay.bean.coupon.WxPayCouponSendResult;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryRequest;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryResult;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxScanPayNotifyResult;
@@ -687,5 +688,18 @@ public interface WxPayService {
    */
   ApiCertificateInfoBo downloadApiCertificates() throws WxPayException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException;
 
-  MicroStoreApplySettleInResult applySettleIn(MicroStoreApplySettleInRequest request) throws Exception;
+  /**
+   * 小微商户申请入驻-上传身份证等图片资源
+   * @param request
+   * @return
+   */
+  MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request);
+
+  /**
+   * 小微商户申请入驻
+   * @param request
+   * @return
+   * @throws Exception
+   */
+  MicroStoreApplySettleInResult microStoreApplySettleIn(MicroStoreApplySettleInRequest request) throws Exception;
 }
