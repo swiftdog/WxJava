@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
+
 @Data
 @Builder(builderMethodName = "newBuilder")
 @NoArgsConstructor
@@ -15,11 +17,7 @@ import lombok.NoArgsConstructor;
 @XStreamAlias("xml")
 public class MicroStoreUploadMediaRequest extends BaseWxPayRequest {
 
-  @XStreamAlias("mch_id")
-  private String mchId;
-
-  @XStreamAlias("media_hash")
-  private String mediaHash;
+  private File file;
 
   @Override
   protected void checkConstraints() throws WxPayException {

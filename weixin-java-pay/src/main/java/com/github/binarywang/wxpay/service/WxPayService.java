@@ -1,6 +1,8 @@
 package com.github.binarywang.wxpay.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Date;
@@ -75,6 +77,16 @@ public interface WxPayService {
    * @throws WxPayException the wx pay exception
    */
   String post(String url, String requestStr, boolean useKey) throws WxPayException;
+
+  /**
+   * 提交表单
+   * @param url
+   * @param formDatas
+   * @param useKey
+   * @return
+   * @throws WxPayException
+   */
+  String postForm(String url, Map<String,Object> formDatas, boolean useKey) throws WxPayException;
 
   /**
    * 获取企业付款服务类.
@@ -693,7 +705,7 @@ public interface WxPayService {
    * @param request
    * @return
    */
-  MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request);
+  MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request) throws WxPayException, IOException;
 
   /**
    * 小微商户申请入驻

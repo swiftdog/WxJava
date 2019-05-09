@@ -1,10 +1,14 @@
 package com.github.binarywang.wxpay.service.impl;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -14,7 +18,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -83,6 +89,32 @@ public class WxPayServiceApacheHttpImpl extends BaseWxPayServiceImpl {
     }
   }
 
+  @Override
+  public String postForm(String url, Map<String,Object> formDatas, boolean useKey) throws WxPayException{
+    HttpEntity httpEntity = createMultiFileEntity(formDatas);
+    try {
+      HttpClientBuilder httpClientBuilder = createHttpClientBuilder(useKey);
+      HttpPost httpPost = new HttpPost(url);
+      httpPost.setEntity(httpEntity);
+
+      httpPost.setConfig(RequestConfig.custom()
+        .setConnectionRequestTimeout(this.getConfig().getHttpConnectionTimeout())
+        .setConnectTimeout(this.getConfig().getHttpConnectionTimeout())
+        .setSocketTimeout(this.getConfig().getHttpTimeout())
+        .build());
+      try (CloseableHttpClient httpClient = httpClientBuilder.build()) {
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+          String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+          return responseString;
+        }
+      } finally {
+        httpPost.releaseConnection();
+      }
+    } catch (Exception e) {
+      throw new WxPayException(e.getMessage(), e);
+    }
+  }
+
   private StringEntity createEntry(String requestStr) {
     try {
       return new StringEntity(new String(requestStr.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
@@ -91,6 +123,21 @@ public class WxPayServiceApacheHttpImpl extends BaseWxPayServiceImpl {
       this.log.error(e.getMessage(), e);
       return null;
     }
+  }
+
+  private HttpEntity createMultiFileEntity(Map<String,Object> params){
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    Set<Map.Entry<String,Object>> entrySet = params.entrySet();
+    for(Map.Entry<String,Object> entry : entrySet){
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      if(value instanceof File){
+        builder.addBinaryBody(key, (File)value, ContentType.DEFAULT_BINARY, ((File)value).getName());
+      }else{
+        builder.addTextBody(key, (String) value, ContentType.MULTIPART_FORM_DATA);
+      }
+    }
+    return builder.build();
   }
 
   private HttpClientBuilder createHttpClientBuilder(boolean useKey) throws WxPayException {

@@ -1,6 +1,9 @@
 package com.github.binarywang.wxpay.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.chanjar.weixin.common.util.crypto.WxCryptUtil;
 import me.chanjar.weixin.common.util.json.GsonHelper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -850,8 +854,24 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
   }
 
   @Override
-  public MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request) {
-    return null;
+  public MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request) throws WxPayException, IOException {
+    request.setSignType(SignType.HMAC_SHA256);
+
+    File file = request.getFile();
+
+    Map<String, Object> formDatas = new HashMap<>();
+    formDatas.put("mch_id", this.getConfig().getMchId());
+    formDatas.put("media", request.getFile());
+    formDatas.put("media_hash", DigestUtils.md5Hex(new FileInputStream(file)).toLowerCase());
+    formDatas.put("sign_type", SignType.HMAC_SHA256);
+    String sign = SignUtils.createSign(formDatas,SignType.HMAC_SHA256,this.getConfig().getMchKey(),new String[]{"media"});
+    formDatas.put("sign", sign);
+
+
+    String url = this.getPayBaseUrl() + "/secapi/mch/uploadmedia";
+    String responseConent = this.postForm(url, formDatas, true);
+    MicroStoreUploadMediaResult microStoreUploadMediaResult = BaseWxPayResult.fromXML(responseConent, MicroStoreUploadMediaResult.class);
+    return microStoreUploadMediaResult;
   }
 
   @Override

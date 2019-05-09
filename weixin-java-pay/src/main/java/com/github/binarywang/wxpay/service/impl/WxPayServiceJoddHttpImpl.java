@@ -1,6 +1,7 @@
 package com.github.binarywang.wxpay.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,11 @@ public class WxPayServiceJoddHttpImpl extends BaseWxPayServiceImpl {
       wxApiData.set(new WxPayApiData(url, requestStr, null, e.getMessage()));
       throw new WxPayException(e.getMessage(), e);
     }
+  }
+
+  @Override
+  public String postForm(String url, Map<String, Object> formDatas, boolean useKey) throws WxPayException {
+    return null;
   }
 
   private HttpRequest buildHttpRequest(String url, String requestStr, boolean useKey) throws WxPayException {
