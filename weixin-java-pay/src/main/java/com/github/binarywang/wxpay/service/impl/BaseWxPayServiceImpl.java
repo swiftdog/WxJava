@@ -863,8 +863,14 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
     formDatas.put("mch_id", this.getConfig().getMchId());
     formDatas.put("media", request.getFile());
     formDatas.put("media_hash", DigestUtils.md5Hex(new FileInputStream(file)).toLowerCase());
-    formDatas.put("sign_type", SignType.HMAC_SHA256);
-    String sign = SignUtils.createSign(formDatas,SignType.HMAC_SHA256,this.getConfig().getMchKey(),new String[]{"media"});
+    formDatas.put("sign_type", SignType.MD5);
+
+    Map<String, String> signParams = new HashMap<>();
+    signParams.put("mch_id",(String)formDatas.get("mch_id"));
+    signParams.put("media_hash",(String)formDatas.get("media_hash"));
+    signParams.put("sign_type",(String)formDatas.get("sign_type"));
+
+    String sign = SignUtils.createSign(signParams,SignType.MD5,this.getConfig().getMchKey(),new String[]{"media"});
     formDatas.put("sign", sign);
 
 

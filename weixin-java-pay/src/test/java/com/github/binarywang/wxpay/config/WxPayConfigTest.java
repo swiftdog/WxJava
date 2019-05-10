@@ -56,7 +56,7 @@ public class WxPayConfigTest {
     WxPayService wxPayService = new WxPayServiceImpl();
     wxPayService.setConfig(payConfig);
     MicroStoreUploadMediaRequest request = new MicroStoreUploadMediaRequest();
-    File file = new File("/Users/yanfei/Pictures/a.png");
+    File file = new File("D:\\a.jpg");
     request.setFile(file);
     MicroStoreUploadMediaResult result = wxPayService.microStoreUploadMedia(request);
     System.out.println(result);
