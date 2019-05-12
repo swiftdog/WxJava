@@ -857,12 +857,12 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
   public MicroStoreUploadMediaResult microStoreUploadMedia(MicroStoreUploadMediaRequest request) throws WxPayException, IOException {
     request.setSignType(SignType.HMAC_SHA256);
 
-    File file = request.getFile();
+    byte[] fileBytes = request.getFileBytes();
 
     Map<String, Object> formDatas = new HashMap<>();
     formDatas.put("mch_id", this.getConfig().getMchId());
-    formDatas.put("media", request.getFile());
-    formDatas.put("media_hash", DigestUtils.md5Hex(new FileInputStream(file)).toLowerCase());
+    formDatas.put("media", fileBytes);
+    formDatas.put("media_hash", DigestUtils.md5Hex(fileBytes).toLowerCase());
     formDatas.put("sign_type", SignType.MD5);
 
     Map<String, String> signParams = new HashMap<>();

@@ -17,7 +17,7 @@ import java.io.File;
 @XStreamAlias("xml")
 public class MicroStoreUploadMediaRequest extends BaseWxPayRequest {
 
-  private File file;
+  private byte[] fileBytes;
 
   @Override
   protected void checkConstraints() throws WxPayException {

@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -133,6 +134,8 @@ public class WxPayServiceApacheHttpImpl extends BaseWxPayServiceImpl {
       Object value = entry.getValue();
       if(value instanceof File){
         builder.addBinaryBody(key, (File)value, ContentType.DEFAULT_BINARY, ((File)value).getName());
+      }else if(value instanceof byte[]){
+        builder.addBinaryBody(key, (byte[])value, ContentType.DEFAULT_BINARY, UUID.randomUUID().toString()+".jpg");
       }else{
         builder.addTextBody(key, (String) value, ContentType.MULTIPART_FORM_DATA);
       }

@@ -9,7 +9,9 @@ import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.testng.Assert.*;
 
@@ -56,8 +58,11 @@ public class WxPayConfigTest {
     WxPayService wxPayService = new WxPayServiceImpl();
     wxPayService.setConfig(payConfig);
     MicroStoreUploadMediaRequest request = new MicroStoreUploadMediaRequest();
-    File file = new File("D:\\a.jpg");
-    request.setFile(file);
+    File file = new File("/Users/yanfei/Pictures/a.png");
+    InputStream is = new FileInputStream(file);
+    byte[] byt = new byte[is.available()];
+    is.read(byt);
+    request.setFileBytes(byt);
     MicroStoreUploadMediaResult result = wxPayService.microStoreUploadMedia(request);
     System.out.println(result);
   }
