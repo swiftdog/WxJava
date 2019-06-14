@@ -899,7 +899,7 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
 
     request.checkAndSign(this.getConfig());
     String url = this.getPayBaseUrl() + "/applyment/micro/submit";
-    String responseContent = this.post(url, request.toXML(), false);
+    String responseContent = this.post(url, request.toXML(), true);
     MicroStoreApplySettleInResult apiCertificateResult = BaseWxPayResult.fromXML(responseContent, MicroStoreApplySettleInResult.class);
     return apiCertificateResult;
   }

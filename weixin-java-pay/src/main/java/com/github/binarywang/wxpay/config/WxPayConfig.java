@@ -95,6 +95,11 @@ public class WxPayConfig {
   private boolean useSandboxEnv = false;
 
   /**
+   * 平台证书路径
+   */
+  private String platformCertPath;
+
+  /**
    * 平台证书SN序列号
    */
   private String platformCertSn;
@@ -170,6 +175,45 @@ public class WxPayConfig {
       throw new WxPayException("证书文件有问题，请核实！", e);
     } finally {
       IOUtils.closeQuietly(inputStream);
+    }
+  }
+
+  public void loadPlatformCert() throws WxPayException {
+    InputStream inputStream;
+    if (this.platformCertContent != null) {
+      //inputStream = new ByteArrayInputStream(this.platformCertContent);
+    } else {
+      if (StringUtils.isBlank(this.platformCertPath)) {
+        throw new WxPayException("请确保微信平台证书platformCertPath已配置");
+      }
+
+      final String prefix = "classpath:";
+      String fileHasProblemMsg = "证书文件【" + this.getPlatformCertPath() + "】有问题，请核实！";
+      String fileNotFoundMsg = "证书文件【" + this.getPlatformCertPath() + "】不存在，请核实！";
+      if (this.getKeyPath().startsWith(prefix)) {
+        String path = StringUtils.removeFirst(this.getPlatformCertPath(), prefix);
+        if (!path.startsWith("/")) {
+          path = "/" + path;
+        }
+        inputStream = WxPayConfig.class.getResourceAsStream(path);
+        if (inputStream == null) {
+          throw new WxPayException(fileNotFoundMsg);
+        }
+      } else {
+        try {
+          File file = new File(this.getPlatformCertPath());
+          if (!file.exists()) {
+            throw new WxPayException(fileNotFoundMsg);
+          }
+
+          inputStream = new FileInputStream(file);
+
+          IOUtils.read(inputStream, platformCertContent);
+          IOUtils.closeQuietly(inputStream);
+        } catch (IOException e) {
+          throw new WxPayException(fileHasProblemMsg, e);
+        }
+      }
     }
   }
 
