@@ -887,15 +887,17 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
     WxPayConfig wxPayConfig = this.getConfig();
     byte[] platformCertSn = wxPayConfig.getPlatformCertContent();
     request.setVersion("3.0");
+    request.setMchId(wxPayConfig.getMchId());
     request.setCertSn(wxPayConfig.getPlatformCertSn());
-    request.setCertSn(WxCryptUtil.rsaEncrypt(request.getCertSn(), platformCertSn));
     request.setIdCardName(WxCryptUtil.rsaEncrypt(request.getIdCardName(), platformCertSn));
     request.setIdCardNumber(WxCryptUtil.rsaEncrypt(request.getIdCardNumber(), platformCertSn));
     request.setAccountName(WxCryptUtil.rsaEncrypt(request.getAccountName(), platformCertSn));
     request.setAccountNumber(WxCryptUtil.rsaEncrypt(request.getAccountNumber(), platformCertSn));
     request.setContact(WxCryptUtil.rsaEncrypt(request.getContact(), platformCertSn));
     request.setContactPhone(WxCryptUtil.rsaEncrypt(request.getContactPhone(), platformCertSn));
-    request.setContactEmail(WxCryptUtil.rsaEncrypt(request.getContactEmail(), platformCertSn));
+    if(StringUtils.isNotEmpty(request.getContactEmail())){
+      request.setContactEmail(WxCryptUtil.rsaEncrypt(request.getContactEmail(), platformCertSn));
+    }
 
     request.checkAndSign(this.getConfig());
     String url = this.getPayBaseUrl() + "/applyment/micro/submit";

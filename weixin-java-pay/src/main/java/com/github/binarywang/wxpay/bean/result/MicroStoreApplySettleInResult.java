@@ -11,8 +11,8 @@ import lombok.Data;
 @XStreamAlias("xml")
 public class MicroStoreApplySettleInResult extends BaseWxPayResult {
 
-  @XStreamAlias("err_code_des")
-  private String errCodeDes;
+  @XStreamAlias("err_param")
+  private String errParam;
 
   @XStreamAlias("applyment_id")
   private String applymentId;

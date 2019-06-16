@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import javax.net.ssl.SSLContext;
 
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.BaseWxPayServiceImpl;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ssl.SSLContexts;
@@ -208,12 +211,25 @@ public class WxPayConfig {
 
           inputStream = new FileInputStream(file);
 
+          platformCertContent = new byte[inputStream.available()];
           IOUtils.read(inputStream, platformCertContent);
           IOUtils.closeQuietly(inputStream);
         } catch (IOException e) {
           throw new WxPayException(fileHasProblemMsg, e);
         }
       }
+    }
+  }
+
+  public void init() throws WxPayException {
+    if(StringUtils.isNotEmpty(this.getPlatformCertPath())){
+      this.loadPlatformCert();
+    }
+    if(this.isUseSandboxEnv()){
+      WxPayService wxPayService = new WxPayServiceImpl();
+      wxPayService.setConfig(this);
+      String sandboxSignKey = wxPayService.getSandboxSignKey();
+      this.setMchKey(sandboxSignKey);
     }
   }
 

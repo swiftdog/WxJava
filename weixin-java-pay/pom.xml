@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>weixin-java-pay</artifactId>
-  <version>3.4.0-snapshot</version>
+  <version>3.4.1-snapshot</version>
 
   <name>WxJava - PAY</name>
   <description>微信支付 Java SDK</description>
