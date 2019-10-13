@@ -201,7 +201,7 @@ public class MicroStoreApplySettleInRequest extends BaseWxPayRequest {
    * 由服务商指定，微信支付提供字典值
    */
   @XStreamAlias("rate")
-  private Double rate;
+  private String rate;
 
   /**
    * 非必填，补充说明
