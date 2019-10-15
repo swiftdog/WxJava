@@ -273,4 +273,31 @@ public class WxPayConstants {
      */
     public static final String CHANGE = "CHANGE";
   }
+
+  /**
+   * 小微商户申请入驻-申请状态
+   */
+  public static class MicroStoreApplyState{
+    /**
+     * 审核中
+     */
+    public static final String AUDITING = "AUDITING";
+    /**
+     * 已驳回
+     */
+    public static final String REJECTED = "REJECTED";
+    /**
+     * 已冻结
+     */
+    public static final String FROZEN = "FROZEN";
+    /**
+     * 待签约
+     */
+    public static final String TO_BE_SIGNED = "TO_BE_SIGNED";
+    /**
+     * 完成
+     */
+    public static final String FINISH = "FINISH";
+  }
+
 }

@@ -1,7 +1,9 @@
 package com.github.binarywang.wxpay.config;
 
+import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.result.ApiCertificateInfoBo;
+import com.github.binarywang.wxpay.bean.result.GetMicroStoreApplyStateResult;
 import com.github.binarywang.wxpay.bean.result.MicroStoreUploadMediaResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -64,6 +66,23 @@ public class WxPayConfigTest {
     is.read(byt);
     request.setFileBytes(byt);
     MicroStoreUploadMediaResult result = wxPayService.microStoreUploadMedia(request);
+    System.out.println(result);
+  }
+
+  @Test
+  public void testGetMicroStoreApplyState() throws Exception {
+    payConfig.setMchId("");
+    payConfig.setMchKey("");
+    payConfig.setApiV3Key("");
+    payConfig.setKeyPath("");
+    payConfig.setPlatformCertSn("");
+    payConfig.setPlatformCertPath("");
+
+    WxPayService wxPayService = new WxPayServiceImpl();
+    wxPayService.setConfig(payConfig);
+    GetMicroStoreApplyStateRequest request = new GetMicroStoreApplyStateRequest();
+    request.setApplymentId("2000002130052446");
+    GetMicroStoreApplyStateResult result = wxPayService.getMicroStoreApplyState(request);
     System.out.println(result);
   }
 

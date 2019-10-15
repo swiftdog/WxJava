@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.zip.ZipException;
 
 import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
+import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.request.*;
@@ -905,4 +906,39 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
     MicroStoreApplySettleInResult apiCertificateResult = BaseWxPayResult.fromXML(responseContent, MicroStoreApplySettleInResult.class);
     return apiCertificateResult;
   }
+
+  @Override
+  public GetMicroStoreApplyStateResult getMicroStoreApplyState(GetMicroStoreApplyStateRequest request) throws Exception {
+    request.setSignType(SignType.HMAC_SHA256);
+    WxPayConfig wxPayConfig = this.getConfig();
+    request.setMchId(wxPayConfig.getMchId());
+    request.setVersion("1.0");
+    request.setApplymentId(request.getApplymentId());
+    request.setBusinessCode(request.getBusinessCode());
+    request.checkAndSign(this.getConfig());
+    String url = this.getPayBaseUrl() + "/applyment/micro/getstate";
+    String responseContent = this.post(url, request.toXML(), true);
+    GetMicroStoreApplyStateResult getMicroStoreApplyStateResult = BaseWxPayResult.fromXML(responseContent, GetMicroStoreApplyStateResult.class);
+
+    if(getMicroStoreApplyStateResult.getApplymentState().equals(WxPayConstants.MicroStoreApplyState.REJECTED)){
+      JsonElement je = new JsonParser().parse(getMicroStoreApplyStateResult.getAuditDetail());
+      JsonObject jo = je.getAsJsonObject();
+      JsonArray data = jo.get("audit_detail").getAsJsonArray();
+      List<Map<String, String>> auditDetails = new ArrayList<>();
+      for(int i=0;data != null && i<data.size();i++){
+        JsonElement subJe = data.get(i);
+        JsonObject subJo = subJe.getAsJsonObject();
+        String paramName = subJo.get("param_name").getAsString();
+        String rejectReason = subJo.get("reject_reason").getAsString();
+        Map<String, String> auditDetail = new HashMap<>();
+        auditDetail.put("paramName", paramName);
+        auditDetail.put("rejectReason", rejectReason);
+        auditDetails.add(auditDetail);
+      }
+      getMicroStoreApplyStateResult.setAuditDetails(auditDetails);
+    }
+
+    return getMicroStoreApplyStateResult;
+  }
+
 }

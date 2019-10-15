@@ -15,6 +15,7 @@ import com.github.binarywang.wxpay.bean.coupon.WxPayCouponSendRequest;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponSendResult;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryRequest;
 import com.github.binarywang.wxpay.bean.coupon.WxPayCouponStockQueryResult;
+import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
@@ -714,4 +715,13 @@ public interface WxPayService {
    * @throws Exception
    */
   MicroStoreApplySettleInResult microStoreApplySettleIn(MicroStoreApplySettleInRequest request) throws Exception;
+
+  /**
+   * 小微商户申请状态查询
+   * @param request
+   * @return
+   * @throws Exception
+   */
+  GetMicroStoreApplyStateResult getMicroStoreApplyState(GetMicroStoreApplyStateRequest request) throws Exception;
+
 }
