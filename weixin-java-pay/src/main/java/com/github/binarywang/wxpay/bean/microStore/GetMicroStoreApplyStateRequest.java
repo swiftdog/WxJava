@@ -18,11 +18,6 @@ public class GetMicroStoreApplyStateRequest extends BaseWxPayRequest {
   @XStreamAlias("version")
   private String version = "1.0";
 
-  /**
-   * 商户号，服务商的商户号
-   */
-  @XStreamAlias("mch_id")
-  private String mchId;
 
   /**
    * 微信支付分配的申请单号。applyment_id、business_code两者不能同时为空。
@@ -36,24 +31,6 @@ public class GetMicroStoreApplyStateRequest extends BaseWxPayRequest {
   @XStreamAlias("business_code")
   private String businessCode;
 
-  /**
-   * 必填，随机字符串
-   */
-  @XStreamAlias("nonce_str")
-  private String nonceStr;
-
-  /**
-   * 必填，签名类型
-   * 仅支持HMAC-SHA256
-   */
-  @XStreamAlias("sign_type")
-  private String signType;
-
-  /**
-   * 必填，签名
-   */
-  @XStreamAlias("sign")
-  private String sign;
 
   @Override
   protected void checkConstraints() throws WxPayException {
