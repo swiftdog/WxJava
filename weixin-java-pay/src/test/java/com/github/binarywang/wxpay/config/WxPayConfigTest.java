@@ -2,9 +2,12 @@ package com.github.binarywang.wxpay.config;
 
 import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
+import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.ApiCertificateInfoBo;
 import com.github.binarywang.wxpay.bean.result.GetMicroStoreApplyStateResult;
 import com.github.binarywang.wxpay.bean.result.MicroStoreUploadMediaResult;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
@@ -83,6 +86,33 @@ public class WxPayConfigTest {
     GetMicroStoreApplyStateRequest request = new GetMicroStoreApplyStateRequest();
     request.setApplymentId("2000002130052446");
     GetMicroStoreApplyStateResult result = wxPayService.getMicroStoreApplyState(request);
+    System.out.println(result);
+  }
+
+  @Test
+  public void testUnifiedOrder() throws Exception{
+    payConfig.setMchId("");
+    payConfig.setMchKey("");
+    payConfig.setApiV3Key("");
+    payConfig.setKeyPath("");
+    payConfig.setPlatformCertSn("");
+    payConfig.setPlatformCertPath("");
+
+    WxPayService wxPayService = new WxPayServiceImpl();
+    wxPayService.setConfig(payConfig);
+    WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
+    request.setAppid("");
+    request.setSubAppId("");
+    request.setMchId("");
+    request.setSubMchId("");
+    request.setBody("小星文具店-会员卡充值");
+    request.setOutTradeNo("201910260001");
+    request.setTotalFee(50);
+    request.setSpbillCreateIp("");
+    request.setNotifyUrl("");
+    request.setTradeType("JSAPI");
+    request.setSubOpenid("");
+    WxPayUnifiedOrderResult result = wxPayService.unifiedOrder(request);
     System.out.println(result);
   }
 
