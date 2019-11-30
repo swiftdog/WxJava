@@ -13,10 +13,7 @@ import java.security.NoSuchProviderException;
 import java.util.*;
 import java.util.zip.ZipException;
 
-import com.github.binarywang.wxpay.bean.microStore.GetApiCertificatesRequest;
-import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
-import com.github.binarywang.wxpay.bean.microStore.MicroStoreApplySettleInRequest;
-import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
+import com.github.binarywang.wxpay.bean.microStore.*;
 import com.github.binarywang.wxpay.bean.request.*;
 import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
@@ -939,6 +936,18 @@ public abstract class BaseWxPayServiceImpl implements WxPayService {
     }
 
     return getMicroStoreApplyStateResult;
+  }
+
+  @Override
+  public MicroStoreQueryAutoWithdrawResult microStoreQueryAutoWithdraw(MicroStoreQueryAutoWithdrawRequest request) throws Exception {
+    request.setSignType(SignType.HMAC_SHA256);
+    WxPayConfig wxPayConfig = this.getConfig();
+    request.setMchId(wxPayConfig.getMchId());
+    request.checkAndSign(this.getConfig());
+    String url = this.getPayBaseUrl() + "/fund/queryautowithdrawbydate";
+    String responseContent = this.post(url, request.toXML(), true);
+    MicroStoreQueryAutoWithdrawResult microStoreQueryAutoWithdrawResult = BaseWxPayResult.fromXML(responseContent, MicroStoreQueryAutoWithdrawResult.class);
+    return microStoreQueryAutoWithdrawResult;
   }
 
 }
