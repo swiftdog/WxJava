@@ -1,13 +1,11 @@
 package com.github.binarywang.wxpay.config;
 
 import com.github.binarywang.wxpay.bean.microStore.GetMicroStoreApplyStateRequest;
+import com.github.binarywang.wxpay.bean.microStore.MicroStoreQueryAutoWithdrawRequest;
 import com.github.binarywang.wxpay.bean.microStore.MicroStoreUploadMediaRequest;
 import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.ApiCertificateInfoBo;
-import com.github.binarywang.wxpay.bean.result.GetMicroStoreApplyStateResult;
-import com.github.binarywang.wxpay.bean.result.MicroStoreUploadMediaResult;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.bean.result.*;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
@@ -86,6 +84,23 @@ public class WxPayConfigTest {
     GetMicroStoreApplyStateRequest request = new GetMicroStoreApplyStateRequest();
     request.setApplymentId("2000002130052446");
     GetMicroStoreApplyStateResult result = wxPayService.getMicroStoreApplyState(request);
+    System.out.println(result);
+  }
+
+  @Test
+  public void testMicroStoreQueryAutoWithdraw() throws Exception{
+    payConfig.setMchId("");
+    payConfig.setMchKey("");
+    payConfig.setApiV3Key("");
+    payConfig.setKeyPath("");
+    payConfig.setPlatformCertSn("");
+    payConfig.setPlatformCertPath("");
+    WxPayService wxPayService = new WxPayServiceImpl();
+    wxPayService.setConfig(payConfig);
+    MicroStoreQueryAutoWithdrawRequest request = new MicroStoreQueryAutoWithdrawRequest();
+    request.setSubMchId("1560199311");
+    request.setDate("20191203");
+    MicroStoreQueryAutoWithdrawResult result = wxPayService.microStoreQueryAutoWithdraw(request);
     System.out.println(result);
   }
 

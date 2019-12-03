@@ -300,4 +300,48 @@ public class WxPayConstants {
     public static final String FINISH = "FINISH";
   }
 
+  /**
+   * 小微商户提现状态
+   * https://pay.weixin.qq.com/wiki/doc/api/xiaowei.php?chapter=21_1
+   */
+  public static class MicroStoreWithdrawState{
+
+    /**
+     * 提现处理中
+     */
+    public static final String PROCESSING = "PROCESSING";
+
+    /**
+     * 提现操作成功
+     */
+    public static final String SUCCESS = "SUCCESS";
+
+    /**
+     * 银行处理失败，提现操作退票
+     */
+    public static final String REFUNDED = "REFUNDED";
+
+    /**
+     * 可重新发起提现
+     */
+    public static final String SUPPORT_RE_WITHDRAW = "SUPPORT_RE_WITHDRAW";
+
+    /**
+     * 当日无提现单，并且当日净交易额大于0，因此支持发起该日自动提现
+     */
+    public static final String SUPPORT_WITHDRAW = "SUPPORT_WITHDRAW";
+
+    /**
+     * 当日距今超过30天；或当日无提现单，并且当日净交易额不大于0，因此不支持发起该日自动提现
+     */
+    public static final String NOT_SUPPORT_WITHDRAW = "NOT_SUPPORT_WITHDRAW";
+
+    /**
+     * 商户无提现权限
+     */
+    public static final String NO_WITHDRAW_AUTH = "NO_WITHDRAW_AUTH";
+
+  }
+
+
 }
